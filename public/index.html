@@ -153,7 +153,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="row head-fast-row">
                     <div class="col-md-6">
                         <div class="head-fast-rack">
-                            <form action="" method="post" class="head-fast-form" name="form1" onsubmit="sendToTelegram(event)">
+                            <form action="" method="post" class="head-fast-form" name="form1" onsubmit="sendToTelegram(event,'form1')">
                                 <input type="hidden" name="subject" value="Заявка на ремонт - шапка лендинга.">
                                 <div class="form-half">
                                     <div class="form-group wow fadeInUp">
@@ -172,74 +172,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             </form>
 
                             <script>
-                                function sendToTelegram(event) {
+                                function sendToTelegram(event, formName) {
                                     event.preventDefault(); // Предотвращаем стандартную отправку формы
 
                                     // Получаем данные из формы
-                                    const form = document.forms['form1'];
+                                    const form = document.forms[formName];
                                     const name = form['name'].value;
                                     const phone = form['phone'].value;
                                     const usluga = form['usluga'].value;
-                                    const subject = 'Новая заявка на ремонт';
+                                    const subject = form['subject'].value;
 
                                     // Формируем сообщение для Telegram
                                     const message = `<b>${subject}</b>\n\nИмя: ${name}\nТелефон: ${phone}\nОписание поломки: ${usluga}`;
 
-                                    // Замените YOUR_BOT_TOKEN и YOUR_CHAT_ID на ваши значения
+                                    // Параметры Telegram
                                     const botToken = '8288483371:AAGP_JR1VG7W0r9XcY5UXHqydIN1vn7EL1Y';
-                                    const chatId = '497578008';
-                                    const chatId2 = '397516222';
+                                    const chatIds = ['497578008', '397516222']; // Массив chatId
                                     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-                                    // Отправляем данные в Telegram
-                                    fetch(url, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            chat_id: chatId,
-                                            text: message,
-                                            parse_mode: 'HTML',
-                                        }),
-                                    })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.ok) {
-                                                alert('Заявка успешно отправлена!');
-                                                form.reset(); // Очищаем форму
-                                            } else {
-                                                alert('Ошибка при отправке заявки. Попробуйте снова.');
-                                            }
+                                    // Отправляем данные в оба чата
+                                    let successCount = 0;
+                                    chatIds.forEach(chatId => {
+                                        fetch(url, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({
+                                                chat_id: chatId,
+                                                text: message,
+                                                parse_mode: 'HTML',
+                                            }),
                                         })
-                                        .catch(error => {
-                                            console.error('Ошибка:', error);
-                                            alert('Произошла ошибка при отправке.');
-                                        });
-                                    fetch(url, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            chat_id: chatId2,
-                                            text: message,
-                                            parse_mode: 'HTML',
-                                        }),
-                                    })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.ok) {
-                                                alert('Заявка успешно отправлена!');
-                                                form.reset(); // Очищаем форму
-                                            } else {
-                                                alert('Ошибка при отправке заявки. Попробуйте снова.');
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Ошибка:', error);
-                                            alert('Произошла ошибка при отправке.');
-                                        });
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.ok) {
+                                                    successCount++;
+                                                    if (successCount === chatIds.length) {
+                                                        alert('Заявка успешно отправлена!');
+                                                        form.reset(); // Очищаем форму только после успешной отправки в оба чата
+                                                    }
+                                                } else {
+                                                    alert(`Ошибка при отправке в чат ${chatId}. Попробуйте снова.`);
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Ошибка:', error);
+                                                alert(`Произошла ошибка при отправке в чат ${chatId}.`);
+                                            });
+                                    });
                                 }
                             </script>
                             <div class="head-fast-thing head-fast-inf">
@@ -375,8 +356,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="call-two-section section">
         <div class="wawe wawe-two"></div>
         <div class="container wawe-top">
-            <form action="https://stiralka.dp.ua/telegram.php" class="call-two wow-delay" method="POST" name="form2">
-			<input type="hidden" name="subject" value="Заявка на ремонт - вторая форма.">
+            <form action="" class="call-two wow-delay" method="POST" name="form2" onsubmit="sendToTelegram(event, 'form2')">
+                <input type="hidden" name="subject" value="Заявка на ремонт - вторая форма.">
                 <div class="call-two-term wow fadeInUp">
                     <p class="form-info wow fadeInUp"><img src="images/info.png" alt="сколько ремонт стиральных машин"><span>- Оставьте заявку - Мастер перезвонит быстро!</span></p>
                 </div>
@@ -392,7 +373,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <textarea class="form-control form-textarea" rows placeholder="Опишите поломку в двух словах (не обязательно)" name="usluga" required></textarea>
                 </div>
                 <div class="call-two-button">
-                    <button class="btn btn-arrow feedback">Отправить заявку</button>
+                    <button class="btn btn-arrow feedback" type="submit">Отправить заявку</button>
                 </div>
             </form>
             <div class="call-two-piece wow-delay">
@@ -640,19 +621,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="modal" id="call" >
         <h3 class="modal-title">Перезвонить мне</h3>
-        <form action="https://stiralka.dp.ua/telegram.php" method="post" name="form3">
-		<input type="hidden" name="subject" value="Перезвонить мне - всплывающая форма.">
+        <form action="" method="post" name="form3" class="head-fast-form" onsubmit="sendToTelegram(event, 'form3')">
+            <input type="hidden" name="subject" value="Перезвонить мне - всплывающая форма.">
             <div class="form-group">
                 <div class="form-required"><input class="form-control" type="text" name="name" placeholder="Ваше имя" required></div>
             </div>
             <div class="form-group">
                 <div class="form-required"><input class="form-control" type="tel" name="phone" placeholder="+38 (___)___-__-__" required></div>
             </div>
-			<div class="form-group">
+            <div class="form-group">
                 <textarea class="form-control form-textarea" rows placeholder="Опишите поломку в двух словах (не обязательно)" name="usluga" required></textarea>
             </div>
             <div class="form-button-full">
-                <button class="btn btn-arrow feedback">Отправить заявку</button>
+                <button class="btn btn-arrow feedback" type="submit">Отправить заявку</button>
             </div>
         </form>
     </div>
