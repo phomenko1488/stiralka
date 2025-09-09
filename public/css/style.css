@@ -449,8 +449,8 @@ input,textarea,button{
     white-space: nowrap
 }
 .btn-whatsapp{
-    background-color: #25d365;
-    background-image: url(../images/whatsapp.png);
+    background-color: #259fd3;
+    background-image: url(../images/telegram-icon.png);
     padding-left: 3.54em;
     padding-right: 1.20em
 }
